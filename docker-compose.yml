@@ -1,0 +1,25 @@
+services:
+  api:
+    build: .
+    image: food-recall-api:latest
+    container_name: food-recall-api
+    ports:
+      - "${PORT:-8000}:8000"
+    environment:
+      DATABASE_PATH: /data/recall.db
+    volumes:
+      - recall-data:/data
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=3)"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    restart: unless-stopped
+
+volumes:
+  recall-data:
